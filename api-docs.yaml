@@ -1,0 +1,121 @@
+openapi: 3.0.1
+info:
+  title: Order Processing Statemachine API
+  description: The purpose of this API is to provide and interface to allow a front
+    end to create orders and move it through all states to completion.
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /api/v1/events:
+    get:
+      tags:
+      - event-controller
+      operationId: findAll
+      responses:
+        "200":
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - START_ORDER
+                  - SUBMIT_ORDER
+                  - FILL_ORDER
+                  - SEND_TO_DISPATCH
+                  - MOVE_TO_AWAITING_DISPATCH_APPROVAL
+                  - APPROVE_DISPATCH
+                  - SEND_INVOICE
+                  - RECEIVE_PAYMENT
+  /api/v1/events/newOrder:
+    post:
+      tags:
+      - event-controller
+      operationId: newOrder
+      responses:
+        "200":
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderEntity'
+  /api/v1/events/{id}/{event}:
+    post:
+      tags:
+      - event-controller
+      operationId: sendEvent
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: event
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - START_ORDER
+          - SUBMIT_ORDER
+          - FILL_ORDER
+          - SEND_TO_DISPATCH
+          - MOVE_TO_AWAITING_DISPATCH_APPROVAL
+          - APPROVE_DISPATCH
+          - SEND_INVOICE
+          - RECEIVE_PAYMENT
+      responses:
+        "200":
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    OrderEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        state:
+          type: string
+          enum:
+          - OPENED
+          - IN_PROGRESS
+          - PROCESSING_ORDER_FORK
+          - PROCESSING_ORDER
+          - PROCESSING_ORDER_JOIN
+          - AWAIT_FILLING
+          - READY_FOR_SHIPMENT
+          - SENT_TO_DISPATCH
+          - READY_FOR_INVOICE
+          - AWAITING_PAYMENT
+          - PAYMENT_RECEIVED
+          - AWAITING_DISPATCH_APPROVAL
+          - COMPLETE
+        subStates:
+          type: array
+          items:
+            type: string
+            enum:
+            - OPENED
+            - IN_PROGRESS
+            - PROCESSING_ORDER_FORK
+            - PROCESSING_ORDER
+            - PROCESSING_ORDER_JOIN
+            - AWAIT_FILLING
+            - READY_FOR_SHIPMENT
+            - SENT_TO_DISPATCH
+            - READY_FOR_INVOICE
+            - AWAITING_PAYMENT
+            - PAYMENT_RECEIVED
+            - AWAITING_DISPATCH_APPROVAL
+            - COMPLETE
+        amount:
+          type: number

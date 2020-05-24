@@ -1,0 +1,12 @@
+package ie.joe.statemachine.domain;
+
+public enum OrderEvent {
+  START_ORDER
+  , SUBMIT_ORDER
+  , FILL_ORDER
+  , SEND_TO_DISPATCH
+  , MOVE_TO_AWAITING_DISPATCH_APPROVAL
+  , APPROVE_DISPATCH
+  , SEND_INVOICE
+  , RECEIVE_PAYMENT
+}
